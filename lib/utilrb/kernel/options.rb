@@ -1,5 +1,4 @@
 require 'utilrb/hash/to_sym_keys'
-require 'utilrb/hash/slice'
 module Kernel
     def filter_options_handle_single_entry(known_options, options, key)
         key = key.to_sym
