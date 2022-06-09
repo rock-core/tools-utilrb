@@ -32,7 +32,7 @@ module Utilrb
     #   pkg.static
     #
     # Arbitrary variables defined in the .pc file can be accessed with
-    # 
+    #
     #   pkg.prefix
     #   pkg.libdir
     #
@@ -130,52 +130,52 @@ module Utilrb
             end
         end
 
-    # Exception raised when a request pkg-config file is not found
-	class NotFound < RuntimeError
+        # Exception raised when a request pkg-config file is not found
+        class NotFound < RuntimeError
             # The name of the pkg-config package
-	    attr_reader :name
+            attr_reader :name
 
-	    def initialize(name); @name = name end
-	end
+            def initialize(name); @name = name end
+        end
 
-    # Exception raised when invalid data is found in a pkg-config file
-    class Invalid < RuntimeError
-        # The name of the pkg-config package
-	    attr_reader :name
+        # Exception raised when invalid data is found in a pkg-config file
+        class Invalid < RuntimeError
+            # The name of the pkg-config package
+            attr_reader :name
 
-	    def initialize(name); @name = name end
-    end
+            def initialize(name); @name = name end
+        end
 
-    attr_reader :path
-	
-	# The module name
-	attr_reader :name
-    attr_reader :description
-    
-    # The module version as a string
-    attr_reader :raw_version
-    
-    # The module version, as an array of integers
-    attr_reader :version
+        attr_reader :path
 
-    attr_reader :raw_fields
+        # The module name
+        attr_reader :name
+        attr_reader :description
 
-    # Information extracted from the file
-    attr_reader :variables
-    attr_reader :fields
+        # The module version as a string
+        attr_reader :raw_version
 
-    # The list of packages that are Require:'d by this package
-    #
-    # @return [Array<PkgConfig>]
-    attr_reader :requires
+        # The module version, as an array of integers
+        attr_reader :version
 
-	# Create a PkgConfig object for the package +name+
-	# Raises PkgConfig::NotFound if the module does not exist
-	def initialize(name)
-	    @name    = name
-	    @fields    = Hash.new
-	    @variables = Hash.new
-	end
+        attr_reader :raw_fields
+
+        # Information extracted from the file
+        attr_reader :variables
+        attr_reader :fields
+
+        # The list of packages that are Require:'d by this package
+        #
+        # @return [Array<PkgConfig>]
+        attr_reader :requires
+
+        # Create a PkgConfig object for the package +name+
+        # Raises PkgConfig::NotFound if the module does not exist
+        def initialize(name)
+            @name    = name
+            @fields    = Hash.new
+            @variables = Hash.new
+        end
 
         # Helper method that expands ${word} in +value+ using the name to value
         # map +variables+
@@ -281,7 +281,7 @@ module Utilrb
             end
             return raw_variables, raw_fields
         end
-        
+
         def expand_variables(raw_variables)
             raw_variables = raw_variables.dup
 
@@ -298,9 +298,9 @@ module Utilrb
             end
             variables
         end
-        
+
         def expand_field(name, field)
-            if SHELL_VARS.include?(name) 
+            if SHELL_VARS.include?(name)
                 value = Shellwords.shellsplit(field)
                 resolved = Array.new
                 while !value.empty?
@@ -334,7 +334,7 @@ module Utilrb
                 raw_variables.merge(builtin_variables(path))
             )
         end
-        
+
         def load_minimal(path, preset_variables = Hash.new)
             raw_variables, raw_fields = parse(path)
             raw_variables = preset_variables.merge(raw_variables)
@@ -403,7 +403,7 @@ module Utilrb
                 true => @ldflags[true].dup,
                 false => @ldflags[false].dup
             }
-            @requires.each do |pkg| 
+            @requires.each do |pkg|
                 @ldflags_with_requires[true].concat(pkg.raw_ldflags_with_requires[true])
                 @ldflags_with_requires[false].concat(pkg.raw_ldflags_with_requires[false])
             end
@@ -420,7 +420,7 @@ module Utilrb
             load_fields
         end
 
-	def self.define_pkgconfig_action(action) # :nodoc:
+        def self.define_pkgconfig_action(action) # :nodoc:
             class_eval <<-EOD, __FILE__, __LINE__+1
             def pkgconfig_#{action.gsub(/-/, '_')}(static = false)
                 if static
@@ -430,8 +430,8 @@ module Utilrb
                 end
             end
             EOD
-	    nil
-	end
+            nil
+        end
 
         def pkgconfig_variable(varname)
             `pkg-config --variable=#{varname}`.strip
@@ -480,10 +480,10 @@ module Utilrb
             end
         end
 
-	ACTIONS = %w{cflags cflags-only-I cflags-only-other 
+	ACTIONS = %w{cflags cflags-only-I cflags-only-other
 		    libs libs-only-L libs-only-l libs-only-other}
         ACTIONS.each { |action| define_pkgconfig_action(action) }
-    
+
         def conflicts
             @conflicts
         end
@@ -555,13 +555,13 @@ module Utilrb
             raw_libs_only_other(static).join(" ")
         end
 
-	def method_missing(varname, *args, &proc) # :nodoc:
-	    if args.empty?
+        def method_missing(varname, *args, &proc) # :nodoc:
+            if args.empty?
                 variables[varname.to_s]
-	    else
-		super(varname, *args, &proc)
-	    end
-	end
+            else
+                super(varname, *args, &proc)
+            end
+        end
 
         def self.pkg_config_path
             ENV['PKG_CONFIG_PATH']
@@ -569,9 +569,8 @@ module Utilrb
 
         def self.each_pkgconfig_directory(pkg_config_path: self.pkg_config_path, &block)
             return enum_for(__method__) if !block_given?
-            if pkg_config_path
-                pkg_config_path.split(':').each(&block)
-            end
+
+            pkg_config_path.split(':').each(&block) if pkg_config_path
             default_search_path.each(&block)
         end
 
