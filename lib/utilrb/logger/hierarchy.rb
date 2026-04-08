@@ -1,5 +1,4 @@
 require 'facets/module/spacename'
-require 'facets/kernel/constant'
 require 'utilrb/object/attribute'
 require 'utilrb/logger/forward'
 require 'weakref'
@@ -141,7 +140,7 @@ class Logger
         def self.extended(obj) # :nodoc:
             obj.logger # initialize the default logger. Also does some checking
             if obj.kind_of?(Module) && !obj.spacename.empty?
-                parent_module = constant(obj.spacename)
+                parent_module = const_get(obj.spacename)
                 if (parent_module.singleton_class.ancestors.include?(::Logger::Forward))
                     obj.send(:extend, ::Logger::Forward)
                 end
@@ -162,7 +161,7 @@ class Logger
                         if m.name && !m.spacename.empty?
                             parent_module =
                                 begin
-                                    constant(m.spacename)
+                                    const_get(m.spacename)
                                 rescue NameError
                                 end
                             if parent_module.respond_to?(:logger)
